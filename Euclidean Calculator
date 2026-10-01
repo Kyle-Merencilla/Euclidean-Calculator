@@ -1,63 +1,82 @@
-def gcd(a, b):
-    while b != 0:
-        remainder = a % b
-        print(a, "÷", b, "=", a // b, "remainder", remainder)
-        a = b
-        b = remainder
-    return a
+import streamlit as st
 
+st.title("GCD and LCM Calculator")
 
-def lcm(a, b):
-    return abs(a * b) // gcd(a, b)
+st.write("Enter your integers below.")
 
+first = st.number_input("First Integer", step=1, format="%d")
+second = st.number_input("Second Integer", step=1, format="%d")
 
-print("=== GCD AND LCM CALCULATOR ===")
+choice = st.radio(
+    "Do you have a third integer to input?",
+    ["No", "Yes"]
+)
 
-first = int(input("Enter First Integer: "))
-second = int(input("Enter Second Integer: "))
+third = None
 
-choice = input("Do you have a third integer to input? (Y/N): ")
+if choice == "Yes":
+    third = st.number_input("Third Integer", step=1, format="%d")
 
-if choice == "Y" or choice == "y":
+if st.button("Calculate GCD and LCM"):
 
-    third = int(input("Enter Third Integer: "))
+    def gcd(a, b):
+        computation = []
 
-    print("\n=== GCD COMPUTATION ===")
+        while b != 0:
+            quotient = a // b
+            remainder = a % b
 
-    print("GCD of", first, "and", second, ":")
-    gcd_first_second = gcd(first, second)
+            computation.append(
+                f"{a} ÷ {b} = {quotient} remainder {remainder}"
+            )
 
-    print("GCD(", first, ",", second, ") =", gcd_first_second)
+            a = b
+            b = remainder
 
-    print("\nGCD of", gcd_first_second, "and", third, ":")
-    final_gcd = gcd(gcd_first_second, third)
+        return a, computation
 
-    print("GCD(", gcd_first_second, ",", third, ") =", final_gcd)
+    def lcm(a, b):
+        gcd_value, _ = gcd(a, b)
+        return abs(a * b) // gcd_value
 
-    print("\nGCD =", final_gcd)
+    st.subheader("GCD Computation")
 
-    print("\n=== LCM COMPUTATION ===")
+    gcd_first_second, gcd_steps_1 = gcd(first, second)
+
+    st.write(f"**GCD({first}, {second})**")
+
+    for step in gcd_steps_1:
+        st.write(step)
+
+    if choice == "Yes":
+
+        final_gcd, gcd_steps_2 = gcd(gcd_first_second, third)
+
+        st.write(f"**GCD({gcd_first_second}, {third})**")
+
+        for step in gcd_steps_2:
+            st.write(step)
+
+        st.success(f"GCD = {final_gcd}")
+
+    else:
+        final_gcd = gcd_first_second
+        st.success(f"GCD = {final_gcd}")
+
+    st.subheader("LCM Computation")
 
     first_lcm = lcm(first, second)
-    print("LCM(", first, ",", second, ") =", first_lcm)
 
-    final_lcm = lcm(first_lcm, third)
-    print("LCM(", first_lcm, ",", third, ") =", final_lcm)
+    st.write(f"LCM({first}, {second}) = {first_lcm}")
 
-    print("\nLCM =", final_lcm)
+    if choice == "Yes":
 
-else:
+        final_lcm = lcm(first_lcm, third)
 
-    print("\n=== GCD COMPUTATION ===")
+        st.write(f"LCM({first_lcm}, {third}) = {final_lcm}")
 
-    final_gcd = gcd(first, second)
+        st.success(f"LCM = {final_lcm}")
 
-    print("GCD(", first, ",", second, ") =", final_gcd)
-    print("\nGCD =", final_gcd)
-
-    print("\n=== LCM COMPUTATION ===")
-
-    final_lcm = lcm(first, second)
-
-    print("LCM(", first, ",", second, ") =", final_lcm)
-    print("\nLCM =", final_lcm)
+    else:
+        final_lcm = first_lcm
+        st.success(f"LCM = {final_lcm}")
