@@ -1,0 +1,82 @@
+import streamlit as st
+
+st.title("GCD and LCM Calculator")
+
+st.write("Enter your integers below.")
+
+first = st.number_input("First Integer", step=1, format="%d")
+second = st.number_input("Second Integer", step=1, format="%d")
+
+choice = st.radio(
+    "Do you have a third integer to input?",
+    ["No", "Yes"]
+)
+
+third = None
+
+if choice == "Yes":
+    third = st.number_input("Third Integer", step=1, format="%d")
+
+if st.button("Calculate GCD and LCM"):
+
+    def gcd(a, b):
+        computation = []
+
+        while b != 0:
+            quotient = a // b
+            remainder = a % b
+
+            computation.append(
+                f"{a} ÷ {b} = {quotient} remainder {remainder}"
+            )
+
+            a = b
+            b = remainder
+
+        return a, computation
+
+    def lcm(a, b):
+        gcd_value, _ = gcd(a, b)
+        return abs(a * b) // gcd_value
+
+    st.subheader("GCD Computation")
+
+    gcd_first_second, gcd_steps_1 = gcd(first, second)
+
+    st.write(f"**GCD({first}, {second})**")
+
+    for step in gcd_steps_1:
+        st.write(step)
+
+    if choice == "Yes":
+
+        final_gcd, gcd_steps_2 = gcd(gcd_first_second, third)
+
+        st.write(f"**GCD({gcd_first_second}, {third})**")
+
+        for step in gcd_steps_2:
+            st.write(step)
+
+        st.success(f"GCD = {final_gcd}")
+
+    else:
+        final_gcd = gcd_first_second
+        st.success(f"GCD = {final_gcd}")
+
+    st.subheader("LCM Computation")
+
+    first_lcm = lcm(first, second)
+
+    st.write(f"LCM({first}, {second}) = {first_lcm}")
+
+    if choice == "Yes":
+
+        final_lcm = lcm(first_lcm, third)
+
+        st.write(f"LCM({first_lcm}, {third}) = {final_lcm}")
+
+        st.success(f"LCM = {final_lcm}")
+
+    else:
+        final_lcm = first_lcm
+        st.success(f"LCM = {final_lcm}")
