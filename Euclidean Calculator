@@ -1,0 +1,99 @@
+import math
+
+def get_factors_display(a, b):
+    """Generates step-by-step Euclidean algorithm steps for GCD."""
+    steps = []
+    x, y = max(a, b), min(a, b)
+    while y != 0:
+        remainder = x % y
+        quotient = x // y
+        steps.append(f"  {x} = {y} × {quotient} + {remainder}")
+        x, y = y, remainder
+    return steps
+
+def gcd_two(a, b):
+    """Returns GCD of two integers using math.gcd."""
+    return math.gcd(a, b)
+
+def lcm_two(a, b):
+    """Calculates LCM of two integers using the formula: (|a * b|) / GCD(a, b)."""
+    if a == 0 or b == 0:
+        return 0
+    return abs(a * b) // gcd_two(a, b)
+
+def calculate_gcd_lcm(*numbers):
+    """Calculates GCD and LCM for two or three integers with step-by-step explanation."""
+    nums = [abs(n) for n in numbers]
+    
+    if len(nums) < 2 or len(nums) > 3:
+        raise ValueError("Please provide either 2 or 3 integers.")
+        
+    print("=" * 50)
+    print(f"COMPUTATION FOR INTEGERS: {', '.join(map(str, nums))}")
+    print("=" * 50)
+
+    if len(nums) == 2:
+        a, b = nums[0], nums[1]
+        
+        # GCD Computation
+        print("\n--- 1. GREATEST COMMON DIVISOR (GCD) ---")
+        print("Using the Euclidean Algorithm:")
+        steps = get_factors_display(a, b)
+        for step in steps:
+            print(step)
+        
+        final_gcd = gcd_two(a, b)
+        print(f"\n=> GCD({a}, {b}) = {final_gcd}")
+
+        # LCM Computation
+        print("\n--- 2. LEAST COMMON MULTIPLE (LCM) ---")
+        print("Formula: LCM(a, b) = (|a × b|) / GCD(a, b)")
+        print(f"Calculation: ({a} × {b}) / {final_gcd} = {a * b} / {final_gcd}")
+        
+        final_lcm = lcm_two(a, b)
+        print(f"\n=> LCM({a}, {b}) = {final_lcm}")
+
+    elif len(nums) == 3:
+        a, b, c = nums[0], nums[1], nums[2]
+
+        # GCD Computation for 3 numbers: GCD(a, b, c) = GCD(GCD(a, b), c)
+        print("\n--- 1. GREATEST COMMON DIVISOR (GCD) ---")
+        print("Formula: GCD(a, b, c) = GCD(GCD(a, b), c)")
+        
+        print(f"\nStep 1: Find GCD({a}, {b}):")
+        steps_1 = get_factors_display(a, b)
+        for step in steps_1:
+            print(step)
+        gcd_ab = gcd_two(a, b)
+        print(f"-> GCD({a}, {b}) = {gcd_ab}")
+
+        print(f"\nStep 2: Find GCD({gcd_ab}, {c}):")
+        steps_2 = get_factors_display(gcd_ab, c)
+        for step in steps_2:
+            print(step)
+        final_gcd = gcd_two(gcd_ab, c)
+        print(f"\n=> GCD({a}, {b}, {c}) = {final_gcd}")
+
+        # LCM Computation for 3 numbers: LCM(a, b, c) = LCM(LCM(a, b), c)
+        print("\n--- 2. LEAST COMMON MULTIPLE (LCM) ---")
+        print("Formula: LCM(a, b, c) = LCM(LCM(a, b), c)")
+        
+        lcm_ab = lcm_two(a, b)
+        print(f"\nStep 1: Find LCM({a}, {b}):")
+        print(f"  ({a} × {b}) / GCD({a}, {b}) = {a * b} / {gcd_ab} = {lcm_ab}")
+
+        gcd_lcm_ab_c = gcd_two(lcm_ab, c)
+        final_lcm = lcm_two(lcm_ab, c)
+        print(f"\nStep 2: Find LCM({lcm_ab}, {c}):")
+        print(f"  ({lcm_ab} × {c}) / GCD({lcm_ab}, {c}) = {lcm_ab * c} / {gcd_lcm_ab_c} = {final_lcm}")
+
+        print(f"\n=> LCM({a}, {b}, {c}) = {final_lcm}")
+
+
+# --- EXAMPLE USAGE ---
+
+# Example with 2 integers:
+calculate_gcd_lcm(48, 18)
+
+# Example with 3 integers:
+calculate_gcd_lcm(12, 18, 24)
